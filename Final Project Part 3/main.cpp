@@ -319,7 +319,8 @@ int main()
 								float j = glm::length(jt + (jn * n));
 								// Calculate new velocities
 								s->setVel(s->getVel() + (j / s->getMass())*n);
-								s->setAngVel(s->getAngVel() + j * s->getInvInertia() * glm::cross(r, n));
+								s->setAngVel(s->getAngVel() + (j * s->getInvInertia() * -glm::normalize(s->getAngVel()))/ glm::length(s->getVel()));
+								//s->setAngVel(s->getAngVel() - (s->getAngVel() * j) / glm::length(s->getVel()));
 								//std::cout << "After " + glm::to_string(s->getAngVel()) << '\n';
 							}
 						}

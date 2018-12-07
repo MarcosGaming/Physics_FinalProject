@@ -74,7 +74,7 @@ int main()
 	
 
 	// Array of spheres
-	const int spheresNumber = 10000;
+	const int spheresNumber = 9000;
 	Sphere* spheres[spheresNumber];
 	Shader sShader = Shader("resources/shaders/physics.vert ", "resources/shaders/physics.frag ");
 	Mesh mesh =  Mesh::Mesh("resources/models/sphere.obj");
