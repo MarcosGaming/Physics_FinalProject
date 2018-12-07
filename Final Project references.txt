@@ -9,3 +9,7 @@ https://www.real-world-physics-problems.com/physics-of-billiards.html
 https://github.com/dwilliamson/GDMagArchive/tree/master/sep99/lander/Code/OGL/Pool
 
 https://www.youtube.com/watch?v=rask8MYJaB4
+
+https://billiards.colostate.edu/physics/Mathavan_IMechE_2010.pdf
+
+https://www.real-world-physics-problems.com/support-files/3d_ball_bounce.pdf

@@ -124,7 +124,7 @@ int main()
 
 	// impulse elements
 	float e = 0.3f;
-	float tableFriction = 0.15f;
+	float tableFriction = 0.1f;
 	float staticFriction = 0.25f;
 	float kineticFriction = 0.001f;
 	float maxVelocity = 20.0f;
@@ -188,17 +188,24 @@ int main()
 				// integration ( rotation )
 				//s->setAngVel(s->getAngVel() + deltaTime * s->getAngAcc());
 				glm::vec3 L = s->getInertia() * s->getAngVel();
-				glm::vec3 torque = glm::cross((s->getPos() - glm::vec3(0.0f, 1.0f, 0.0f)) - s->getPos(), frictionForce(s->getVel(), s->getMass(), L));
-				s->setRotationalMomentum(L + torque * deltaTime);
-				// If linear velocity is 0 reduce angular velocity
-				if (glm::length(s->getVel()) < 0.01f)
+				glm::vec3 torque;
+				if (glm::length(s->getVel()) <= glm::length(s->getRadius() * s->getAngVel()))
 				{
-					s->setAngVel(s->getInvInertia() * s->getRotationalMomentum()/1.05f);
+					torque = glm::vec3(0.0f);
+					glm::vec3 angVel = s->getAngVel();
+					if (angVel != glm::vec3(0.0f))
+					{
+						angVel = glm::normalize(s->getAngVel()) * glm::length(s->getVel());
+					}
+					s->setAngVel(angVel);
 				}
 				else
 				{
+					torque = glm::cross((s->getPos() - glm::vec3(0.0f, 1.0f, 0.0f)) - s->getPos(), frictionForce(s->getVel(), s->getMass(), L));
+					s->setRotationalMomentum(L + torque * deltaTime);
 					s->setAngVel(s->getInvInertia() * s->getRotationalMomentum());
 				}
+				s->setRotationalMomentum(L + torque * deltaTime); 
 				// create skew symmetric matrix for w
 				glm::mat3 angVelSkew = glm::matrixCross3(s->getAngVel());
 				// create 3x3 rotation matrix from rb rotation matrix
@@ -255,32 +262,6 @@ int main()
 				{
 					for (Sphere* s : grid[i][j])
 					{
-						// Friction with the table 
-						/*float forceGravity = -9.8f * s->getMass();
-						// Calculate vt
-						glm::vec3 rTable = glm::vec3(s->getPos().x, s->getPos().y - s->getRadius(), s->getPos().z) - s->getPos();
-						glm::vec3 vrTable = s->getVel() + glm::cross(s->getAngVel(), contactN);
-						glm::vec3 vtTable = vrTable - (glm::dot(vrTable, contactN)*contactN);
-						float vtMagnitude = glm::length(vtTable);
-						// Use dynamic friction
-						if (vtMagnitude > 5.0f)
-						{
-							glm::vec3 tangencialImpulse = (forceGravity * -kineticFriction * glm::normalize(vtTable));
-							std::cout << glm::to_string(tangencialImpulse) << '\n';
-							// Calculate new velocities
-							s->setAcc(s->getAcc() - tangencialImpulse / s->getMass());
-							s->setAngAccl(s->getAngAcc() - tangencialImpulse / s->getMass());
-						}
-						// Use static friction
-						else if(vtMagnitude != 0.0f)
-						{
-							vtMagnitude /= 5.0f;
-							glm::vec3 tangencialImpulse =  (vtMagnitude * forceGravity * -staticFriction * glm::normalize(vtTable));
-							// Calculate new velocities
-							s->setAcc(s->getAcc() + tangencialImpulse / s->getMass());
-							s->setAngAccl(s->getAngAcc() + tangencialImpulse / s->getMass());
-						}*/
-
 						// Collision with table only if i is 0/max or j is 0/max
 						if (i == 0 || i == gridDimension - 1 || j == 0 || j == gridDimension - 1)
 						{

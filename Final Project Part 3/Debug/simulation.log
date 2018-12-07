@@ -1,4 +1,8 @@
-﻿  Body.cpp
+﻿  main.cpp
+c:\users\40284094\desktop\physics_finalproject\final project part 3\main.cpp(222): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\40284094\desktop\physics_finalproject\final project part 3\main.cpp(223): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\40284094\desktop\physics_finalproject\final project part 3\main.cpp(232): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\40284094\desktop\physics_finalproject\final project part 3\main.cpp(233): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
 Mesh.obj : warning LNK4049: locally defined symbol ___glewBindBuffer imported
@@ -8,5 +12,5 @@ Mesh.obj : warning LNK4049: locally defined symbol ___glewEnableVertexAttribArra
 Mesh.obj : warning LNK4049: locally defined symbol ___glewVertexAttribPointer imported
 Mesh.obj : warning LNK4049: locally defined symbol ___glewBindVertexArray imported
 Mesh.obj : warning LNK4049: locally defined symbol ___glewGenVertexArrays imported
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Marcos\Desktop\Physics_Practicals\Final Project Part 3\Debug\vc120.pdb'; linking object as if no debug info
-  simulation.vcxproj -> C:\Users\Marcos\Desktop\Physics_Practicals\Final Project Part 3\Debug\simulation.exe
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\40284094\Desktop\Physics_FinalProject\Final Project Part 3\Debug\vc120.pdb'; linking object as if no debug info
+  simulation.vcxproj -> C:\Users\40284094\Desktop\Physics_FinalProject\Final Project Part 3\Debug\simulation.exe
