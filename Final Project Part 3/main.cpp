@@ -55,7 +55,7 @@ glm::vec3 frictionForce(glm::vec3 vel, float mass, glm::vec3 L)
 		return glm::vec3(0.0f);
 	}
 	glm::vec3 direction = glm::normalize(vel);
-	glm::vec3 fFriction = -direction * 0.1 * mass * glm::length(glm::vec3(0.0f, -9.8f, 0.0f));
+	glm::vec3 fFriction = -direction * 0.1f * mass * glm::length(glm::vec3(0.0f, -9.8f, 0.0f));
 	return fFriction;
 }
 
@@ -104,7 +104,7 @@ int main()
 	
 
 	// Array of spheres
-	const int spheresNumber = 1;
+	const int spheresNumber = 16;
 	Sphere* spheres[spheresNumber];
 	Shader sShader = Shader("resources/shaders/physics.vert ", "resources/shaders/physics.frag ");
 	Mesh mesh =  Mesh::Mesh("resources/models/sphere.obj");
@@ -125,7 +125,7 @@ int main()
 	// impulse elements
 	float e = 0.3f;
 	float tableFriction = 0.1f;
-	float staticFriction = 0.25f;
+	float ballFriction = 0.05f;
 	float kineticFriction = 0.001f;
 	float maxVelocity = 20.0f;
 	// Contact normal with table
@@ -156,21 +156,38 @@ int main()
 				spheres[i]->setPos(positions[i]);
 			}
 		}
-		// If 1 is press normal impulse added to ball 0
+		// Press 1 for top spin
 		if (glfwGetKey(app.getWindow(), '1') == GLFW_PRESS)
 		{
-			glm::vec3 j = glm::vec3(0.0f, 0.0f, -5.0f);
-			spheres[0]->setVel(spheres[0]->getVel() + j / spheres[0]->getMass());
+			glm::vec3 j1 = glm::vec3(0.0f, 0.0f, -15.0f);
+			spheres[0]->setVel(spheres[0]->getVel() + j1 / spheres[0]->getMass());
+			glm::vec3 j2 = glm::vec3(0.0f, 0.0f, -1.0f);
+			spheres[0]->setAngVel(spheres[0]->getAngVel() + spheres[0]->getInvInertia() * glm::cross(spheres[0]->getPos() + glm::vec3(0.0f, 1.0f, -1.0f) - spheres[0]->getPos(), j2));
 		}
-		// Press 2 back spin
+		// Press 2 for back spin
 		if (glfwGetKey(app.getWindow(), '2') == GLFW_PRESS)
 		{
 			glm::vec3 j1 = glm::vec3(0.0f, 0.0f, -10.0f);
 			spheres[0]->setVel(spheres[0]->getVel() + j1 / spheres[0]->getMass());
-			glm::vec3 j2 = glm::vec3(0.0f, 0.0f, -2.0f);
+			glm::vec3 j2 = glm::vec3(0.0f, 0.0f, -10.0f);
 			spheres[0]->setAngVel(spheres[0]->getAngVel() + spheres[0]->getInvInertia() * glm::cross(spheres[0]->getPos() + glm::vec3(0.0f, -1.0f, -1.0f) - spheres[0]->getPos(), j2));
 		}
-
+		// Press 3 for right spin
+		if (glfwGetKey(app.getWindow(), '3') == GLFW_PRESS)
+		{
+			glm::vec3 j1 = glm::vec3(0.0f, 0.0f, -10.0f);
+			spheres[0]->setVel(spheres[0]->getVel() + j1 / spheres[0]->getMass());
+			glm::vec3 j2 = glm::vec3(0.0f, 0.0f, -2.0f);
+			spheres[0]->setAngVel(spheres[0]->getAngVel() + spheres[0]->getInvInertia() * glm::cross(spheres[0]->getPos() + glm::vec3(1.0f, 0.0f, 0.0f) - spheres[0]->getPos(), j2));
+		}
+		// Press 4 for left spin
+		if (glfwGetKey(app.getWindow(), '4') == GLFW_PRESS)
+		{
+			glm::vec3 j1 = glm::vec3(0.0f, 0.0f, -10.0f);
+			spheres[0]->setVel(spheres[0]->getVel() + j1 / spheres[0]->getMass());
+			glm::vec3 j2 = glm::vec3(0.0f, 0.0f, -2.0f);
+			spheres[0]->setAngVel(spheres[0]->getAngVel() + spheres[0]->getInvInertia() * glm::cross(spheres[0]->getPos() + glm::vec3(-1.0f, 0.0f, 0.0f) - spheres[0]->getPos(), j2));
+		}
 
 		/*
 		**	SIMULATION
@@ -319,14 +336,19 @@ int main()
 								float j = glm::length(jt + (jn * n));
 								// Calculate new velocities
 								s->setVel(s->getVel() + (j / s->getMass())*n);
-								s->setAngVel(s->getAngVel() + (j * s->getInvInertia() * -glm::normalize(s->getAngVel()))/ glm::length(s->getVel()));
-								//s->setAngVel(s->getAngVel() - (s->getAngVel() * j) / glm::length(s->getVel()));
-								//std::cout << "After " + glm::to_string(s->getAngVel()) << '\n';
+								if (glm::length(s->getAngVel()) > 20.0f && glm::length(s->getVel()) > 10.0f)
+								{
+									s->setAngVel(s->getAngVel() / 1.05f);
+								}
+								else
+								{
+									s->setAngVel(s->getAngVel() + ((glm::length(s->getVel()) + j) * s->getInvInertia() * -glm::normalize(s->getAngVel())));
+								}
 							}
 						}
 
 						//Sphere with sphere collisions if there are more than one in the cell
-						/*if (grid[i][j].size() > 1)
+						if (grid[i][j].size() > 1)
 						{
 							for (Sphere* sColliding : grid[i][j])
 							{
@@ -360,19 +382,26 @@ int main()
 										}
 										else
 										{
-											jt = -frictionCoefficient * glm::abs(jn) * glm::normalize(vt);
+											jt = -ballFriction * glm::abs(jn) * glm::normalize(vt);
 										}
 										// total impulse
 										float j = glm::length(jt + (jn * n));
 										// Calculate new velocities
 										s->setVel(s->getVel() - (j*n / s->getMass()));
 										sColliding->setVel(sColliding->getVel() + (j*n / sColliding->getMass()));
-										s->setAngVel(s->getAngVel() - j * s->getInvInertia() * glm::cross(r1, n));
-										sColliding->setAngVel(sColliding->getAngVel() + j * sColliding->getInvInertia() * glm::cross(r2, n));
+										// Spin transfer depends on the linear velocity
+										if (glm::length(sColliding->getAngVel()) != 0.0f)
+										{
+											s->setAngVel(s->getAngVel() - j * s->getInvInertia() * -glm::normalize(sColliding->getAngVel()));
+										}
+										if (glm::length(s->getAngVel()) != 0.0f)
+										{
+											sColliding->setAngVel(sColliding->getAngVel() + j * sColliding->getInvInertia() * -glm::normalize(s->getAngVel()));
+										}
 									}
 								}
 							}
-						}*/
+						}
 					}
 					// Clean the cell
 					grid[i][j].clear();
@@ -390,11 +419,11 @@ int main()
 		// draw groud plane
 		app.draw(table);
 		//draw the spheres
-		/*for (Sphere* s : spheres)
+		for (Sphere* s : spheres)
 		{
 			app.draw(s->getMesh());
-		}*/
-		app.draw(spheres[0]->getMesh());
+		}
+		//app.draw(spheres[0]->getMesh());
 
 		app.display();
 	}
