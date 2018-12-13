@@ -55,7 +55,7 @@ glm::vec3 frictionForce(glm::vec3 vel, float mass, glm::vec3 L)
 		return glm::vec3(0.0f);
 	}
 	glm::vec3 direction = glm::normalize(vel);
-	glm::vec3 fFriction = -direction * 0.1f * mass * glm::length(glm::vec3(0.0f, -9.8f, 0.0f));
+	glm::vec3 fFriction = -direction * 0.95f * mass * glm::length(glm::vec3(0.0f, -9.8f, 0.0f));
 	return fFriction;
 }
 
@@ -104,7 +104,7 @@ int main()
 	
 
 	// Array of spheres
-	const int spheresNumber = 16;
+	const int spheresNumber = 2;
 	Sphere* spheres[spheresNumber];
 	Shader sShader = Shader("resources/shaders/physics.vert ", "resources/shaders/physics.frag ");
 	Mesh mesh =  Mesh::Mesh("resources/models/sphere.obj");
@@ -125,7 +125,7 @@ int main()
 	// impulse elements
 	float e = 0.3f;
 	float tableFriction = 0.1f;
-	float ballFriction = 0.05f;
+	float ballFriction = 0.3f;
 	float kineticFriction = 0.001f;
 	float maxVelocity = 20.0f;
 	// Contact normal with table
@@ -392,11 +392,11 @@ int main()
 										// Spin transfer depends on the linear velocity
 										if (glm::length(sColliding->getAngVel()) != 0.0f)
 										{
-											s->setAngVel(s->getAngVel() - j * s->getInvInertia() * -glm::normalize(sColliding->getAngVel()));
+											s->setAngVel(s->getAngVel() - (j / glm::length(sColliding->getVel())) * s->getInvInertia() * -glm::normalize(sColliding->getAngVel()));
 										}
 										if (glm::length(s->getAngVel()) != 0.0f)
 										{
-											sColliding->setAngVel(sColliding->getAngVel() + j * sColliding->getInvInertia() * -glm::normalize(s->getAngVel()));
+											sColliding->setAngVel(sColliding->getAngVel() + (j / glm::length(s->getVel())) * sColliding->getInvInertia() * -glm::normalize(s->getAngVel()));
 										}
 									}
 								}
