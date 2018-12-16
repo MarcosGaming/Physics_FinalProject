@@ -1,0 +1,2 @@
+1,2,3,4 to launch the ball with different rotations
+0 to reorder all the balls
