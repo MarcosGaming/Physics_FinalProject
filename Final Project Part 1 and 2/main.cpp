@@ -68,9 +68,9 @@ int main()
 	table.setShader(lambert);
 
 	// Create grid
-	const int gridDimension = 100;
+	const int gridDimension = 80;
 	std::vector<Sphere*> grid[gridDimension][gridDimension];
-	float cellsDimension = 10.0f;
+	float cellsDimension = 12.5;
 	
 
 	// Array of spheres

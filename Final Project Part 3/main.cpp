@@ -104,7 +104,7 @@ int main()
 	
 
 	// Array of spheres
-	const int spheresNumber = 2;
+	const int spheresNumber = 16;
 	Sphere* spheres[spheresNumber];
 	Shader sShader = Shader("resources/shaders/physics.vert ", "resources/shaders/physics.frag ");
 	Mesh mesh =  Mesh::Mesh("resources/models/sphere.obj");
@@ -390,13 +390,15 @@ int main()
 										s->setVel(s->getVel() - (j*n / s->getMass()));
 										sColliding->setVel(sColliding->getVel() + (j*n / sColliding->getMass()));
 										// Spin transfer depends on the linear velocity
+										glm::vec3 sDirection = -glm::normalize(sColliding->getAngVel());
+										glm::vec3 sCollidingDirection = -glm::normalize(s->getAngVel());
 										if (glm::length(sColliding->getAngVel()) != 0.0f)
 										{
-											s->setAngVel(s->getAngVel() - (j / glm::length(sColliding->getVel())) * s->getInvInertia() * -glm::normalize(sColliding->getAngVel()));
+											s->setAngVel(s->getAngVel() - (j / glm::length(sColliding->getVel())) * s->getInvInertia() * sDirection);
 										}
 										if (glm::length(s->getAngVel()) != 0.0f)
 										{
-											sColliding->setAngVel(sColliding->getAngVel() + (j / glm::length(s->getVel())) * sColliding->getInvInertia() * -glm::normalize(s->getAngVel()));
+											sColliding->setAngVel(sColliding->getAngVel() + (j / glm::length(s->getVel())) * sColliding->getInvInertia() * sCollidingDirection);
 										}
 									}
 								}
